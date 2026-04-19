@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservices UI</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { padding: 10px 15px; background: #0070f3; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Microservices Platform (INTERNAL)</h1>
+    
+    <div class="card">
+        <h3>Create User</h3>
+        <input type="text" id="userName" placeholder="Name">
+        <input type="email" id="userEmail" placeholder="Email">
+        <button onclick="createUser()">Create User</button>
+    </div>
+
+    <div class="card">
+        <h3>Create Order</h3>
+        <input type="number" id="orderUserId" placeholder="User ID">
+        <input type="text" id="orderItem" placeholder="Item Name">
+        <input type="number" id="orderAmount" placeholder="Amount">
+        <button onclick="createOrder()">Create Order</button>
+    </div>
+
+    <div class="card">
+        <h3>Logs</h3>
+        <pre id="logs" style="background: #e0e0e0; padding: 10px; max-height: 200px; overflow-y: auto;"></pre>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080';
+
+        function log(msg) {
+            document.getElementById('logs').innerText += JSON.stringify(msg, null, 2) + '\n';
+        }
+
+        async function createUser() {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const res = await fetch(`${API_URL}/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await res.json();
+            log(data);
+        }
+
+        async function createOrder() {
+            const user_id = parseInt(document.getElementById('orderUserId').value);
+            const item = document.getElementById('orderItem').value;
+            const amount = parseFloat(document.getElementById('orderAmount').value);
+            const res = await fetch(`${API_URL}/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id, item, amount })
+            });
+            const data = await res.json();
+            log(data);
+        }
+    </script>
+</body>
+</html>

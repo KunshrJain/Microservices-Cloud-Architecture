@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: microservices
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  auth-service:
+    build: ./services/auth-service
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/microservices?sslmode=disable
+    depends_on:
+      - postgres
+
+  order-service:
+    build: ./services/order-service
+
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - order-service
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - gateway
