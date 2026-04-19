@@ -94,4 +94,4 @@ graph TD
 ---
 
 ## 📄 License
-Released under the MIT License. Built with ❤️ for cloud-native excellence.
+Released under the MIT License. Built for cloud-native excellence.
